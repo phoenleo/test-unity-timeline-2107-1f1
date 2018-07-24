@@ -4,6 +4,17 @@ using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.Timeline;
 
+
+/*
+|-------------------
+|   Custom Track   
+|-------------------
+|
+|	- Track Clip Type define what track clip that can be instantiated in this track
+|	- Track Binding Type definge what MonoObject that can be bound to this track
+|		- Bound object can be manipulated within PlayableBehaviour defined within the track clip
+|
+*/
 [TrackClipType(typeof(AnimatorPlayableTrack))]
 [TrackBindingType(typeof(Animator))]
 public class AnimatorTrack : TrackAsset 

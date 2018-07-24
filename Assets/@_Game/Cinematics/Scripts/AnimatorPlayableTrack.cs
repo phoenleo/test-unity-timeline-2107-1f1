@@ -4,9 +4,18 @@ using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.Timeline;
 
+/*
+|--------------------------
+| 	Custom Timeline Clip    
+|--------------------------
+|
+|	Used to initialize clip creation process
+|
+*/
 [System.Serializable]
 public class AnimatorPlayableTrack : PlayableAsset
 {
+	// Serialized object
 	public AnimatorPlayableBehaviour template = new AnimatorPlayableBehaviour();
 	
 	// Factory method that generates a playable based on this asset

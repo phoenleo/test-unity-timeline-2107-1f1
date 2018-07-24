@@ -20,6 +20,7 @@ public class SceneController : MonoBehaviour
 	
 	
 	void Awake () {
+		// HACK: Quick and dirty Singleton implementation
 		if (Instance != null) Destroy(this);
 		if (Instance == null) Instance = this;
 	}
@@ -41,7 +42,7 @@ public class SceneController : MonoBehaviour
 	public void PausePlayableDirector (PlayableDirector playableDirector) {
 		playableDirector.Pause();
 		currentlyPausedPlayableDirector = playableDirector;
-		onUpdateAction = WaitForSpaceInput;
+		onUpdateAction = WaitForSpaceInputToResume;
 	}
 
 	
@@ -51,23 +52,29 @@ public class SceneController : MonoBehaviour
 	|-------------------
 	*/
 	void Init () {
+		// Dynamic object instatiation process
 		var decorationObject = Instantiate(decorationObjectPrefab);
-		
 		var cinematicsController = Instantiate(cinematicsControllerPrefab);
-		var timelineAsset = (TimelineAsset) cinematicsController.playableAsset;
 
+		// Binding dynamically instatiated object to instantiated timeline (playable director) instance
+		// Notes:
+		//	- in this case playable asset is bound in prefab asset, so we don't need to instantiate timeline asset
+		var timelineAsset = (TimelineAsset) cinematicsController.playableAsset;
 		var outputs = timelineAsset.outputs.ToArray();
 		for (int i = 0; i < outputs.Count(); i++) {
 			var track = (TrackAsset) outputs[i].sourceObject;
 			var trackOutputs = track.outputs.ToArray();
-			Debug.Log(track.name);
-			Debug.Log(trackOutputs[0].GetType().Name);
+			Debug.Log(track.name);	
+			Debug.Log(trackOutputs[0].GetType().Name);	// Always return PlayableBinding, must manually try to cast to child classes
 			SetBinding(cinematicsController, track, decorationObject);
 		}
 		
 		cinematicsController.Play();
 	}
 
+	
+	// Set binding based on track name
+	// - need better binding logic for multiple bindSource variant
 	void SetBinding (PlayableDirector cinematicsController, TrackAsset trackAsset, GameObject bindSource) {
 		switch (trackAsset.name) {
 			case "Activation Track":
@@ -94,7 +101,7 @@ public class SceneController : MonoBehaviour
 	|   Delegates   
 	|-------------------
 	*/
-	void WaitForSpaceInput () {
+	void WaitForSpaceInputToResume () {
 		if (Input.GetKeyUp(KeyCode.Space)) {
 			Debug.Log("Space");
 			ResumeCurrentlyPausedPlayableDirector();
